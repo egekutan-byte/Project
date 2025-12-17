@@ -10,36 +10,46 @@ public class Main {
     static String[] commodities = {"Gold", "Oil", "Silver", "Wheat", "Copper"};
     static String[] months = {"January","February","March","April","May","June",
                               "July","August","September","October","November","December"};
-    static int[][][] data=null;
+    static int[][][] data=new int[MONTHS][COMMS][DAYS];
 
     // ======== REQUIRED METHOD LOAD DATA (Students fill this) ========
     public static void loadData() {
         Scanner sc=null;
         for (int mIndex = 0; mIndex <MONTHS;mIndex++) {
-            String fName = "Data_Files/"+months[mIndex]+".txt";
+            String fName = "Data_Files/"+months[mIndex]+".txt"; //Path to the file
             try {
-                sc=new Scanner(Paths.get(fName));
+                sc=new Scanner(Paths.get(fName)); //Ready for getting input from file
 
-                while(sc.hasNextLine()){
-                    String line = sc.nextLine();
+                while(sc.hasNextLine()){ //As long as there is a new line continue scanning
+                    String line = sc.nextLine(); //read a line from file
 
-                    if(line.contains("Day")){
+                    //check to skip first(title) line and empty lines
+                    if(line.substring(0,3).equals("Day") || line.trim().equals("")){ //if(line.startsWith("Day") || line.trim().isEmpty()){
                         continue;
                     }
-                String[] info=line.split(",");
+                String[] info=line.split(","); //splitting info into string array, ex: "1,Gold,2312" -> "1","Gold","2312"
                 int day=Integer.parseInt(info[0].trim());
                 int commodity=0;
                 for (int i=0;i<COMMS;i++){
                     if(commodities[i].equals(info[1].trim())){
                         commodity=i;
+                        break;
                     }
                 }
 
+                int profit=Integer.parseInt(info[2].trim());
+                data[mIndex][commodity][day-1]=profit; //ex: data[0][0][0]=2312
+                 //System.out.println("Profıt:"+data[mIndex][commodity][day-1]);
 
                 }
+            } catch (FileNotFoundException e) {
+                System.err.println("The file that was search could not found!");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("The file that was search could not be readed!");
+            }finally{
+                sc.close();
             }
+
         }
 
     }
@@ -47,7 +57,25 @@ public class Main {
     // ======== 10 REQUIRED METHODS (Students fill these) ========
 
     public static String mostProfitableCommodityInMonth(int month) {
-        return "DUMMY"; 
+        if(month<0 || month>=MONTHS){
+            return  "INVALID_MONTH";
+        }
+        int[] profits={0,0,0,0,0}; //Array to sum of each commodities' profit!
+        for (int i = 0; i <COMMS; i++) {
+            for(int j=0;j<DAYS;j++){
+                profits[i]+=data[month][i][j];
+            }
+        }
+
+        int mostProfitableIndex=0;
+        int mostProfit=0;
+        for (int i = 0; i < COMMS; i++) {
+            if(profits[i]>mostProfit){
+                mostProfit=profits[i];
+                mostProfitableIndex=i;
+            }
+        }
+        return commodities[mostProfitableIndex]+ " "+mostProfit;
     }
 
     public static int totalProfitOnDay(int month, int day) {
