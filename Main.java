@@ -79,14 +79,14 @@ public class Main {
     }
 
     public static int totalProfitOnDay(int month, int day) {
-        if(month<0 || month>MONTHS || day<0 || day>DAYS){
+        if(month<0 || month>MONTHS || day<0 || day>DAYS){//Checking the values first
             return -99999;
         }
-        int totalProfit=0;
+        int totalProfit=0;//it should be 0 at first so that we can add all to profits of the particular day one by one in the for loop.
         for (int i = 0; i <COMMS; i++) {
-            totalProfit+=data[month][i][day-1];
-        }
-        return totalProfit;
+            totalProfit+=data[month][i][day-1];//which means ı am adding the values to totalProfit one by one e.g. data[0][0][0]=1234 so first ı add this and now
+        }                                      //it's time for the second data(data[0][1][0]=4312) so it goes...
+        return totalProfit;//and for the last we need to return the totalProfit obviously
     }
 
     public static int commodityProfitInRange(String commodity, int from, int to) {
@@ -103,12 +103,12 @@ public class Main {
     }
 
     public static int bestDayOfMonth(int month) {
-        int bestDay=0;
-        for (int i = 0; i <COMMS ; i++) {
-            for (int j = 0; j < DAYS; j++) {
-                if(data[month][i][j]>bestDay){
-                    bestDay=data[month][i][j];
-                }
+        int bestDay=0;//so we don't know anything about the best day so ı first initialize it to a number ı decided to initialize it to 0.
+        for (int i = 0; i <COMMS ; i++) {//so we have a nested for loop here the reason why we use this nested for loop is that we need to go through all
+            for (int j = 0; j < DAYS; j++) {//the commodities and the days and then decide which day is the bestDay
+                if(data[month][i][j]>bestDay){//and in here at first i and j is 0 so which means if(data[month][0][0]>bestDay) we need to initialize the data
+                    bestDay=data[month][i][j];//to bestDay and for now the bestDay is data[month][0][0] but if the second data is bigger than the first data we need to
+                }//initialize the second data to bestDay so it goes like this...
             }
         }
         return bestDay;
