@@ -90,11 +90,28 @@ public class Main {
     }
 
     public static int commodityProfitInRange(String commodity, int from, int to) {
+       /* int totalProfitInRange=0;
+        for (int i = 0; i <COMMS; i++) {
+            if(commodity.equals(commodities[i]) && from<=1 && to<=28){
+                for (int j=from;j<to;j++) {
+                    totalProfitInRange+=data[][][j]
+
+                }
+            }
+        }*/
         return 1234;
     }
 
-    public static int bestDayOfMonth(int month) { 
-        return 1234; 
+    public static int bestDayOfMonth(int month) {
+        int bestDay=0;
+        for (int i = 0; i <COMMS ; i++) {
+            for (int j = 0; j < DAYS; j++) {
+                if(data[month][i][j]>bestDay){
+                    bestDay=data[month][i][j];
+                }
+            }
+        }
+        return bestDay;
     }
     
     public static String bestMonthForCommodity(String comm) { 
@@ -124,6 +141,5 @@ public class Main {
     public static void main(String[] args) {
         loadData();
         System.out.println("Data loaded – ready for queries");
-
     }
 }
