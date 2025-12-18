@@ -114,8 +114,30 @@ public class Main {
         return bestDay;
     }
     
-    public static String bestMonthForCommodity(String comm) { 
-        return "DUMMY"; 
+    public static String bestMonthForCommodity(String comm) {
+        int commIndex=-1;
+        for (int i = 0; i < COMMS; i++) {
+            if(commodities[i].equals(comm)){
+                commIndex=i;
+                break;
+            }
+        }
+        if(commIndex==-1){
+            return "INVALID_COMMODITY";
+        }
+        int maxProfit=0;
+        int IndexofTheBestMonth=-1;
+        for (int i = 0; i <MONTHS ; i++) {
+            int totalProfitofTheMonth=0;
+            for (int j = 0; j < DAYS; j++) {
+                totalProfitofTheMonth+=data[i][commIndex][j];
+            }
+            if(totalProfitofTheMonth>maxProfit){
+                maxProfit=totalProfitofTheMonth;
+                IndexofTheBestMonth=i;
+            }
+        }
+        return months[IndexofTheBestMonth];
     }
 
     public static int consecutiveLossDays(String comm) { 
@@ -141,5 +163,6 @@ public class Main {
     public static void main(String[] args) {
         loadData();
         System.out.println("Data loaded – ready for queries");
+        System.out.println(bestMonthForCommodity("Gold"));
     }
 }
