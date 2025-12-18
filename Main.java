@@ -39,7 +39,7 @@ public class Main {
 
                 int profit=Integer.parseInt(info[2].trim());
                 data[mIndex][commodity][day-1]=profit; //ex: data[0][0][0]=2312
-                 //System.out.println("Profıt:"+data[mIndex][commodity][day-1]);
+                 //System.out.println("Profit:"+data[mIndex][commodity][day-1]);
 
                 }
             } catch (FileNotFoundException e) {
@@ -79,7 +79,14 @@ public class Main {
     }
 
     public static int totalProfitOnDay(int month, int day) {
-        return 1234;
+        if(month<0 || month>MONTHS || day<0 || day>DAYS){
+            return -99999;
+        }
+        int totalProfit=0;
+        for (int i = 0; i <COMMS; i++) {
+            totalProfit+=data[month][i][day-1];
+        }
+        return totalProfit;
     }
 
     public static int commodityProfitInRange(String commodity, int from, int to) {
@@ -117,5 +124,6 @@ public class Main {
     public static void main(String[] args) {
         loadData();
         System.out.println("Data loaded – ready for queries");
+
     }
 }
