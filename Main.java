@@ -79,7 +79,7 @@ public class Main {
     }
 
     public static int totalProfitOnDay(int month, int day) {
-        if(month<0 || month>MONTHS || day<0 || day>DAYS){//Checking the values first
+        if(month<0 || month>MONTHS || day<1 || day>DAYS){//Checking the values first
             return -99999;
         }
         int totalProfit=0;//it should be 0 at first so that we can add all to profits of the particular day one by one in the for loop.
@@ -90,19 +90,28 @@ public class Main {
     }
 
     public static int commodityProfitInRange(String commodity, int from, int to) {
-       /* int totalProfitInRange=0;
-        for (int i = 0; i <COMMS; i++) {
-            if(commodity.equals(commodities[i]) && from<=1 && to<=28){
-                for (int j=from;j<to;j++) {
-                    totalProfitInRange+=data[][][j]
-
-                }
+        int commIndex=-1;
+        for (int i = 0; i < COMMS; i++) {
+            if(commodities[i].equals(commodity)){
+                commIndex=i;
+                break;
             }
-        }*/
-        return 1234;
+        }
+        if(commIndex==-1 || from<0 || to>28){
+            return -99999;
+        }
+        int totalProfit=0;
+        for (int i = from-1; i <to-1 ; i++) {
+            totalProfit+=data[0][commIndex][i];
+        }
+        return totalProfit;
     }
 
     public static int bestDayOfMonth(int month) {
+        if(month<0 || month>=MONTHS){
+            return -1;
+        }
+
         int bestDay=0;//so we don't know anything about the best day so ı first initialize it to a number ı decided to initialize it to 0.
         for (int i = 0; i <COMMS ; i++) {//so we have a nested for loop here the reason why we use this nested for loop is that we need to go through all
             for (int j = 0; j < DAYS; j++) {//the commodities and the days and then decide which day is the bestDay
@@ -115,8 +124,8 @@ public class Main {
     }
     
     public static String bestMonthForCommodity(String comm) {
-        int commIndex=-1;
-        for (int i = 0; i < COMMS; i++) {
+        int commIndex=-1;//in the 133. line,ı need to add the profits of all the months and decide which one is the best month so ı need an index for it.
+        for (int i = 0; i < COMMS; i++) {//in this for loop,ı first check if the user entered a correct value or not.
             if(commodities[i].equals(comm)){
                 commIndex=i;
                 break;
@@ -125,9 +134,9 @@ public class Main {
         if(commIndex==-1){
             return "INVALID_COMMODITY";
         }
-        int maxProfit=0;
-        int IndexofTheBestMonth=-1;
-        for (int i = 0; i <MONTHS ; i++) {
+        int maxProfit=0;//and here ı first created an integer called maxProfit,with this integer ı can decide which value is the max in a basic if condition.
+        int IndexofTheBestMonth=-1;//and also like ı said in the 118. line,ı need an index to use the data array.
+        for (int i = 0; i <MONTHS ; i++) {//here starts a nested for loop because ı want to get all of the
             int totalProfitofTheMonth=0;
             for (int j = 0; j < DAYS; j++) {
                 totalProfitofTheMonth+=data[i][commIndex][j];
@@ -140,20 +149,101 @@ public class Main {
         return months[IndexofTheBestMonth];
     }
 
-    public static int consecutiveLossDays(String comm) { 
-        return 1234; 
+    public static int consecutiveLossDays(String comm) {
+        int commIndex=-1;
+        for (int i = 0; i < COMMS; i++) {
+            if(commodities[i].equals(comm)){
+                commIndex=i;
+                break;
+            }
+        }
+        if(commIndex==-1){
+            return -1;
+        }
+        int currentStreak=0,longestStreak=0;
+        for (int i = 0; i < MONTHS; i++) {
+            for (int j = 0; j < DAYS; j++) {
+                if(data[i][commIndex][j]<0){
+                    currentStreak++;
+                }else{
+                    if(currentStreak>longestStreak){
+                        longestStreak=currentStreak;
+                    }
+                    currentStreak=0;
+                }
+            }
+        }
+        return longestStreak;
     }
     
-    public static int daysAboveThreshold(String comm, int threshold) { 
-        return 1234; 
+    public static int daysAboveThreshold(String comm, int threshold) {
+        int commIndex=-1;
+        for (int i = 0; i < COMMS; i++) {
+            if(commodities[i].equals(comm)){
+                commIndex=i;
+                break;
+            }
+        }
+        if(commIndex==-1){
+            return -1;
+        }
+
+        int numOfDays=0;
+        for (int i = 0; i < MONTHS; i++) {
+            for (int j = 0; j < DAYS; j++) {
+                if(data[i][commIndex][j]>threshold){
+                    numOfDays++;
+                }
+            }
+        }
+        return numOfDays;
     }
 
-    public static int biggestDailySwing(int month) { 
-        return 1234; 
+    public static int biggestDailySwing(int month) {
+        if(month<0 || month>=MONTHS){
+            return -99999;
+        }
+        int previousDay=0,diffDay=0,currentDay;
+        for (int i = 0; i <DAYS ; i++) {
+            currentDay=0;
+            for (int j = 0; j < COMMS; j++) {
+                currentDay+=data[month][j][i];
+            }
+            if(previousDay-currentDay<diffDay){
+                diffDay=previousDay-currentDay;
+            }
+            previousDay=currentDay;
+        }
+
+        return diffDay;
     }
     
-    public static String compareTwoCommodities(String c1, String c2) { 
-        return "DUMMY is better by 1234"; 
+    public static String compareTwoCommodities(String c1, String c2) {
+        int c1Index=-1,c2Index=-1;
+        for (int i = 0; i < COMMS; i++) {
+            if(commodities[i].equals(c1)){
+                c1Index=i;
+            }else if(commodities[i].equals(c2)){
+                c2Index=i;
+            }
+        }
+        if(c1Index==-1 || c2Index==-1){
+            return "INVALID_COMMODITY";
+        }
+        int c1Profit=0,c2Profit=0;
+        for (int i = 0; i <MONTHS ; i++) {
+            for (int j = 0; j < DAYS; j++) {
+                c1Profit+=data[i][c1Index][j];
+                c2Profit+=data[i][c2Index][j];
+            }
+        }
+        if(c1Profit>c2Profit){
+            return commodities[c1Index]+" is better by"+(c1Profit-c2Index);
+        }else if(c1Profit<c2Profit){
+            return commodities[c2Index]+" is better by"+(c2Profit-c1Index);
+        }else{
+            return "Equal";
+        }
     }
     
     public static String bestWeekOfMonth(int month) { 
@@ -163,6 +253,6 @@ public class Main {
     public static void main(String[] args) {
         loadData();
         System.out.println("Data loaded – ready for queries");
-        System.out.println(bestMonthForCommodity("Gold"));
+
     }
 }
