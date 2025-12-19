@@ -101,7 +101,7 @@ public class Main {
             return -99999;
         }
         int totalProfit=0;
-        for (int i = from-1; i <to-1 ; i++) {
+        for (int i = from-1; i <=to-1 ; i++) {
             totalProfit+=data[0][commIndex][i];
         }
         return totalProfit;
@@ -111,15 +111,21 @@ public class Main {
         if(month<0 || month>=MONTHS){
             return -1;
         }
-
+        int maxValue=0;
         int bestDay=0;//so we don't know anything about the best day so ı first initialize it to a number ı decided to initialize it to 0.
-        for (int i = 0; i <COMMS ; i++) {//so we have a nested for loop here the reason why we use this nested for loop is that we need to go through all
-            for (int j = 0; j < DAYS; j++) {//the commodities and the days and then decide which day is the bestDay
-                if(data[month][i][j]>bestDay){//and in here at first i and j is 0 so which means if(data[month][0][0]>bestDay) we need to initialize the data
-                    bestDay=data[month][i][j];//to bestDay and for now the bestDay is data[month][0][0] but if the second data is bigger than the first data we need to
-                }//initialize the second data to bestDay so it goes like this...
+        for (int i = 0; i <DAYS ; i++) {//so we have a nested for loop here the reason why we use this nested for loop is that we need to go through all
+            int totalProfit=0;
+            for (int j = 0; j <COMMS; j++) {
+                totalProfit=data[month][j][i];
+                if(totalProfit>maxValue){
+                    maxValue=totalProfit;
+                    bestDay=i+1;
+                }
             }
+
+
         }
+
         return bestDay;
     }
     
@@ -238,21 +244,41 @@ public class Main {
             }
         }
         if(c1Profit>c2Profit){
-            return commodities[c1Index]+" is better by"+(c1Profit-c2Index);
+            return commodities[c1Index]+" is better by "+(c1Profit-c2Index);
         }else if(c1Profit<c2Profit){
-            return commodities[c2Index]+" is better by"+(c2Profit-c1Index);
+            return commodities[c2Index]+" is better by "+(c2Profit-c1Index);
         }else{
             return "Equal";
         }
     }
     
-    public static String bestWeekOfMonth(int month) { 
-        return "DUMMY"; 
+    public static String bestWeekOfMonth(int month) {
+        if(month<0 || month>=MONTHS){
+            return "INVALID_MONTH";
+        }
+        int currentProfit =0,bestWeek=1,bestProfit=0,currentWeek=1;
+
+        for (int i = 0; i <MONTHS ; i++) {
+            for (int j = 0; j <DAYS; j=j+7) {
+                for (int k = j; k <=j+6; k++) {
+                    for (int l = 0; l < COMMS; l++) {
+                        currentProfit +=data[i][l][k];
+                    }
+                }
+
+                if(currentProfit>bestProfit){
+                    bestProfit=currentProfit;
+                    bestWeek=currentWeek;
+                }
+                currentProfit=0;
+                currentWeek++;
+            }
+        }
+        return "Week"+bestWeek;
     }
 
     public static void main(String[] args) {
         loadData();
         System.out.println("Data loaded – ready for queries");
-
     }
 }
