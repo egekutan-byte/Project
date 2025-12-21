@@ -14,7 +14,9 @@ public class Main {
     static int[][][] data=new int[MONTHS][COMMS][DAYS];
 
 
-    /* Github Link:https://github.com/egekutan-byte/Project */
+    /* Github Link:https://github.com/egekutan-byte/Project
+    this is my github link,so i accidentally downloaded all the files to the github and i didnt want to delete them all because otherwise there would be too much commit
+     so thats why i left it like that.*/
 
     // ======== REQUIRED METHOD LOAD DATA (Students fill this) ========
     public static void loadData() {
