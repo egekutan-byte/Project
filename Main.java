@@ -1,4 +1,5 @@
 // Main.java — Students version
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
@@ -11,6 +12,9 @@ public class Main {
     static String[] months = {"January","February","March","April","May","June",
                               "July","August","September","October","November","December"};
     static int[][][] data=new int[MONTHS][COMMS][DAYS];
+
+
+    /* Github Link:https://github.com/egekutan-byte/Project */
 
     // ======== REQUIRED METHOD LOAD DATA (Students fill this) ========
     public static void loadData() {
@@ -30,7 +34,7 @@ public class Main {
                 String[] info=line.split(","); //splitting info into string array, ex: "1,Gold,2312" -> "1","Gold","2312"
                 int day=Integer.parseInt(info[0].trim());
                 int commodity=0;
-                for (int i=0;i<COMMS;i++){
+                for (int i=0;i<COMMS;i++){//Time to check the commodities if they are whether equal to the info[1] or not
                     if(commodities[i].equals(info[1].trim())){
                         commodity=i;
                         break;
@@ -39,15 +43,18 @@ public class Main {
 
                 int profit=Integer.parseInt(info[2].trim());
                 data[mIndex][commodity][day-1]=profit; //ex: data[0][0][0]=2312
-                 //System.out.println("Profit:"+data[mIndex][commodity][day-1]);
+
 
                 }
             } catch (FileNotFoundException e) {
-                System.err.println("The file that was search could not found!");
+
             } catch (IOException e) {
-                System.err.println("The file that was search could not be readed!");
+
             }finally{
-                sc.close();
+                if(sc!=null){//If the file never opens,the sc value will be null and we get an nullPointerException error thats why we need to check it first.
+                    sc.close();
+                }
+
             }
 
         }
@@ -61,7 +68,7 @@ public class Main {
             return  "INVALID_MONTH";
         }
         int[] profits={0,0,0,0,0}; //Array to sum of each commodities' profit!
-        for (int i = 0; i <COMMS; i++) {
+        for (int i = 0; i <COMMS; i++) {//In this for loops,we add the profits of each day of each commodity seperately
             for(int j=0;j<DAYS;j++){
                 profits[i]+=data[month][i][j];
             }
@@ -79,7 +86,7 @@ public class Main {
     }
 
     public static int totalProfitOnDay(int month, int day) {
-        if(month<0 || month>MONTHS || day<1 || day>DAYS){//Checking the values first
+        if(month<0 || month>=MONTHS || day<1 || day>DAYS){//Checking the values first
             return -99999;
         }
         int totalProfit=0;//it should be 0 at first so that we can add all to profits of the particular day one by one in the for loop.
@@ -97,12 +104,15 @@ public class Main {
                 break;
             }
         }
-        if(commIndex==-1 || from<0 || to>28){
+        if(commIndex==-1 || from<1 || to>DAYS || from>to ){
             return -99999;
         }
         int totalProfit=0;
-        for (int i = from-1; i <=to-1 ; i++) {
-            totalProfit+=data[0][commIndex][i];
+        for (int j = 0; j < MONTHS; j++) {
+            for (int i = from-1; i <=to-1 ; i++) {
+                totalProfit+=data[j][commIndex][i];
+            }
+
         }
         return totalProfit;
     }
@@ -116,11 +126,11 @@ public class Main {
         for (int i = 0; i <DAYS ; i++) {//so we have a nested for loop here the reason why we use this nested for loop is that we need to go through all
             int totalProfit=0;
             for (int j = 0; j <COMMS; j++) {
-                totalProfit=data[month][j][i];
+                totalProfit+=data[month][j][i];
                 if(totalProfit>maxValue){
                     maxValue=totalProfit;
-                    bestDay=i+1;
-                }
+                    bestDay=i+1;//In the description,it was said that the days should be like this:Day=1-28 so i added 1 to "i" because the "i" itself is actually
+                }//               the index of the days.
             }
 
 
@@ -142,13 +152,13 @@ public class Main {
         }
         int maxProfit=0;//and here ı first created an integer called maxProfit,with this integer ı can decide which value is the max in a basic if condition.
         int IndexofTheBestMonth=-1;//and also like ı said in the 118. line,ı need an index to use the data array.
-        for (int i = 0; i <MONTHS ; i++) {//here starts a nested for loop because ı want to get all of the
+        for (int i = 0; i <MONTHS ; i++) {
             int totalProfitofTheMonth=0;
             for (int j = 0; j < DAYS; j++) {
                 totalProfitofTheMonth+=data[i][commIndex][j];
             }
-            if(totalProfitofTheMonth>maxProfit){
-                maxProfit=totalProfitofTheMonth;
+            if(totalProfitofTheMonth>maxProfit){//It is a basic control of the maximum profit every time the value of i and j increases the if block will continue
+                maxProfit=totalProfitofTheMonth;//to be checked all over again and updates the maxProfit value if a bigger number occures.
                 IndexofTheBestMonth=i;
             }
         }
@@ -166,23 +176,25 @@ public class Main {
         if(commIndex==-1){
             return -1;
         }
-        int currentStreak=0,longestStreak=0;
+        int currentStreak=0,longestStreak=0;//At first,there are no streaks thats why its 0.
         for (int i = 0; i < MONTHS; i++) {
             for (int j = 0; j < DAYS; j++) {
-                if(data[i][commIndex][j]<0){
-                    currentStreak++;
-                }else{
-                    if(currentStreak>longestStreak){
+                if(data[i][commIndex][j]<0){//But after this if block,we check that if whether there is a negative value or not.If there is,
+                    currentStreak++;//the currentStreak value will increase by 1 and updates to 1 so it goes like this.
+                }else{//And also we want to find the longest streak so in order to that we add an if block inside of the else block just like i did
+                    if(currentStreak>longestStreak){//in the bestMonthForCommodity method.
                         longestStreak=currentStreak;
                     }
-                    currentStreak=0;
-                }
+                    currentStreak=0;//And if the if statement is false at some point,the currentStreak needs to be zero because literally if the value is greater than
+                }//0 the current streak will end and it will be 0 again.
             }
         }
         return longestStreak;
     }
     
-    public static int daysAboveThreshold(String comm, int threshold) {
+    public static int daysAboveThreshold(String comm, int threshold) {/* daysAboveThreshold(String commodity, int threshold)
+                                                                            → Return: number of days where profit > threshold
+                                                                            → Invalid commodity: return -1 */
         int commIndex=-1;
         for (int i = 0; i < COMMS; i++) {
             if(commodities[i].equals(comm)){
@@ -215,8 +227,8 @@ public class Main {
             for (int j = 0; j < COMMS; j++) {
                 currentDay+=data[month][j][i];
             }
-            if(previousDay-currentDay<diffDay){
-                diffDay=previousDay-currentDay;
+            if(Math.abs(previousDay-currentDay)>diffDay){
+                diffDay=Math.abs(previousDay-currentDay);
             }
             previousDay=currentDay;
         }
@@ -244,11 +256,11 @@ public class Main {
             }
         }
         if(c1Profit>c2Profit){
-            return commodities[c1Index]+" is better by "+(c1Profit-c2Index);
+            return commodities[c1Index]+" is better by "+(c1Profit-c2Profit);
         }else if(c1Profit<c2Profit){
-            return commodities[c2Index]+" is better by "+(c2Profit-c1Index);
+            return commodities[c2Index]+" is better by "+(c2Profit-c1Profit);
         }else{
-            return "Equal";
+            return "Equal ";
         }
     }
     
@@ -258,11 +270,11 @@ public class Main {
         }
         int currentProfit =0,bestWeek=1,bestProfit=0,currentWeek=1;
 
-        for (int i = 0; i <MONTHS ; i++) {
+
             for (int j = 0; j <DAYS; j=j+7) {
                 for (int k = j; k <=j+6; k++) {
                     for (int l = 0; l < COMMS; l++) {
-                        currentProfit +=data[i][l][k];
+                        currentProfit +=data[month][l][k];
                     }
                 }
 
@@ -273,8 +285,8 @@ public class Main {
                 currentProfit=0;
                 currentWeek++;
             }
-        }
-        return "Week"+bestWeek;
+
+        return "Week "+bestWeek;
     }
 
     public static void main(String[] args) {
